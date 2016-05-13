@@ -1,0 +1,116 @@
+/*
+ * MatrixDisplayPanel.java
+ * a JPanel that displays a  DSM on a GUI using JLabels in a GridLayout
+ */
+ package sdtv.gui;
+
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+/**
+ *
+ * @author Erik
+ */
+public class MatrixDisplayPanel extends JPanel {
+    
+    /** Creates a new instance of MatrixDisplayPanel
+     * which is a JPanel that displays a DSM on a GUI using JLabels in a GridLayout
+     * @param input the software DSM
+     */
+    public MatrixDisplayPanel(double[][] input) {
+          	
+    	int width = input.length;
+        int length;
+        if (input.length > 0)
+            length = input[0].length;
+        else
+            length = 0;
+      
+        GridBagLayout gbl = new BigGridBagLayout();
+            
+       
+
+        setLayout(gbl);
+    	GridBagConstraints gbc = new GridBagConstraints();
+    	
+    	gbc.weightx = 1.0;
+    	gbc.fill    = GridBagConstraints.HORIZONTAL;
+        
+    	gbc.gridx   = 0;
+	gbc.gridy   = 0;
+	JLabel item = new JLabel(" ");
+	gbl.setConstraints(item, gbc);
+        add(item);	
+        
+        for (int i = 0; i < length; i++) {
+            gbc.gridx   = i+1;
+    	    gbc.gridy   = 0;
+    	    item = new JLabel(" " + i);
+    	    gbl.setConstraints(item, gbc);
+    		add(item);	
+        }
+        
+        for (int i = 0; i < width; i++) {
+            System.out.println(i);
+            
+            gbc.gridx   = 0;
+    	    gbc.gridy   = i+1;
+    	    item = new JLabel("" + i);
+    	    gbl.setConstraints(item, gbc);
+    		add(item);
+        
+            for (int j = 0; j < length; j++) {
+            	if (input[i][j] > 0) {
+            	    
+                    gbc.gridx   = j+1;
+            	    gbc.gridy   = i+1;
+            	    item = new JLabel("x");
+            	    gbl.setConstraints(item, gbc);
+            		add(item);
+            	}
+            }
+        }
+         
+        
+        
+        
+        /*
+        setLayout(new GridLayout(width+1, 1));
+        StringBuffer sb = new StringBuffer ("     ");
+        for (int i = 0; i < length; i++) {
+        	sb.append(getJustified(i));
+        }
+        add(new JLabel(sb.toString()));
+        	
+        for (int i = 0; i < width; i++) {
+        	sb = new StringBuffer(getJustified(i));
+            for (int j = 0; j < length; j++) {
+            	sb.append(getJustified(input[i][j]));
+            }
+            add(new JLabel(sb.toString()));
+        }
+        */
+    }
+    
+    private String getJustified(double input) {
+    	String inputString = ((Double)input).toString();
+    	StringBuffer result = new StringBuffer();
+    	int spaces = 7 - inputString.length();
+    	for (int i =0; i < spaces; i++)
+        	result.append(" ");
+    	return result.toString();
+    	
+    	
+    }
+    
+    class BigGridBagLayout extends GridBagLayout {
+        
+        public BigGridBagLayout() {
+            MAXGRIDSIZE = 2048;
+        }
+    }
+    
+}

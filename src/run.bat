@@ -1,0 +1,1 @@
+java sdtv.main.Main -Xmx2048m

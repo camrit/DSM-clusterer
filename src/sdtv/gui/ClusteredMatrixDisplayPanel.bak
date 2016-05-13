@@ -1,0 +1,151 @@
+/*
+ * ClusteredMatrixDisplayPanel.java
+ * a JPanel that displays a clustered DSM on a GUI using JLabels in a GridLayout
+ */
+
+package sdtv.gui;
+
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+/**
+ *
+ * @author Erik
+ */
+public class ClusteredMatrixDisplayPanel extends JPanel {
+    
+    // cluster colors. 
+    public static final Color[] clustercolors = new Color[] { 
+        Color.YELLOW, Color.RED, Color.GREEN, Color.BLUE,
+        Color.CYAN, Color.GRAY, Color.MAGENTA, Color.ORANGE, 
+        Color.PINK, Color.LIGHT_GRAY
+    
+    };
+        
+    /** Creates a new instance of ClusteredMatrixDisplayPanel */
+    public ClusteredMatrixDisplayPanel(double[][] sdsm, Set<Set<Integer>> clusters) {
+        System.out.println("Now rendering cluster display");
+    	GridBagLayout gbl = new GridBagLayout();
+        setLayout(gbl);
+    	GridBagConstraints gbc = new GridBagConstraints();
+    	
+    	gbc.weightx = 1.0;
+    	gbc.fill    = GridBagConstraints.HORIZONTAL;
+        
+        List<Integer> order = new ArrayList<Integer>();
+        Map<Integer, Integer> orderCluster = new HashMap<Integer, Integer>();
+        
+        int clusternumber = 0;
+        int col, row;
+        JLabel dummy = new JLabel();
+        
+        for (Set<Integer> cluster: clusters) {
+            for (Integer clusterElement : cluster) {
+                if (!order.contains(clusterElement)) {
+                    order.add(clusterElement);
+                    orderCluster.put(clusterElement, clusternumber);
+                }
+            }
+            
+            clusternumber++;
+        }
+        
+        //System.out.println(order.toString());
+        
+        gbc.gridx   = 0;
+	gbc.gridy   = 0;
+	JLabel item = new JLabel(" ");
+	gbl.setConstraints(item, gbc);
+	add(item);	
+	
+        col = 0;
+        for (Integer i: order) {
+        	gbc.gridx   = col+1;
+        	gbc.gridy   = 0;
+        	item = new JLabel(" " + i);
+        	gbl.setConstraints(item, gbc);
+        	add(item);
+                col++;
+        }
+        
+        row = 0;
+        for (Integer i: order) {
+            gbc.gridx   = 0;
+    	    gbc.gridy   = row+1;
+    	    item = new JLabel("" + i);
+    	    gbl.setConstraints(item, gbc);
+    		add(item);
+            
+            // COLORS ENTIRE CLUSTERS
+            col = 0;
+            boolean sameCluster; nonZero; clusterDisplayStared; clusterDisplayStopped;
+            
+            if (row != 0 && (row+1) % 100 == 0)
+                System.out.println("Filling matrix (row " + (row+1) + " of " + sdsm.length + ")");
+            
+            clusterDisplayStarted = false;
+            clusterDisplayStopped = false;
+            
+            StringBuffer sb = new StringBuffer();
+            
+            
+            
+            for (Integer j: order) {
+                sameCluster = orderCluster.get(i) == orderCluster.get(j);
+                nonZero = sdsm[i][j] > 0;
+                
+                if (!clusterDisplayStarted && sameCluster) { // start of colored area
+                    
+                }
+                
+                if (nonZero || sameCluster ) {
+                                       
+                    gbc.gridx   = col+1;
+            	    gbc.gridy   = row+1;
+            	    
+                    if (nonZero)
+                        item = new JLabel("x");            
+                    else
+                        item = new JLabel(" ");
+                    
+                    if (orderCluster.get(i) == orderCluster.get(j)) {
+                        item.setOpaque(true);
+                        item.setBackground(clustercolors[orderCluster.get(i) % clustercolors.length]);           
+                    }
+                    gbl.setConstraints(item, gbc);
+                    add(item);
+            	}
+                col++;
+            }
+            
+            row++;
+            
+            /* // ONLY DISPLAYS COLORS ON NONZERO LOCATIONS
+            for (Integer j: order) {
+            	if (sdsm[i][j] > 0 ) {
+            		gbc.gridx   = j+1;
+            	    gbc.gridy   = i;
+            	    item = new JLabel("x");
+	                if (orderCluster.get(i) == orderCluster.get(j)) {
+	                	item.setOpaque(true);
+	                	item.setBackground(clustercolors[orderCluster.get(i) % clustercolors.length]);
+	                }
+	                add(item);
+	          
+            	}
+            }
+            */
+        }       
+        System.out.println("Rendering done! Now wait till Java has put the output on screen...");
+    }
+    
+}
